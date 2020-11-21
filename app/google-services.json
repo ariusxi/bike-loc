@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1042773314477",
+    "firebase_url": "https://bike-loc.firebaseio.com",
+    "project_id": "bike-loc",
+    "storage_bucket": "bike-loc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042773314477:android:b21802d5c04006a3046f24",
+        "android_client_info": {
+          "package_name": "br.com.felix.bikeloc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042773314477-kddveavpbuq3bvoqgt4equlbtn1eflgu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR6A6oFhifTF_PxoJWYgeMAhIFmnBO2nA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042773314477-kddveavpbuq3bvoqgt4equlbtn1eflgu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
