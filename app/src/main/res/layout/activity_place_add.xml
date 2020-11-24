@@ -9,67 +9,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/placeId"
+        <EditText
+            android:id="@+id/nameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/shr_hint_id"
-            >
+            android:hint="@string/shr_hint_nome"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
             android:id="@+id/descriptionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/shr_hint_descricao">
+            android:hint="@string/shr_hint_descricao"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
             android:id="@+id/latitudeInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/shr_hint_latitude">
+            android:enabled="false"
+            android:hint="@string/shr_hint_latitude"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
             android:id="@+id/longitudeInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/shr_hint_longitude">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:enabled="false"
+            android:hint="@string/shr_hint_longitude"/>
         <Button
             android:id="@+id/CadastrarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cadastrar"
+            android:onClick="savePlace"
             android:layout_gravity="right"
-            android:layout_marginRight="20dp"
-            style="@style/Widget.MaterialComponents.Button"
-            />
+            android:layout_marginRight="20dp" />
     </LinearLayout>
-
-
 </FrameLayout>
