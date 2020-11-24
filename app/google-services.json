@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "1042773314477",
-    "firebase_url": "https://bike-loc.firebaseio.com",
-    "project_id": "bike-loc",
-    "storage_bucket": "bike-loc.appspot.com"
+    "project_number": "124574380347",
+    "firebase_url": "https://bikeloc-9f171.firebaseio.com",
+    "project_id": "bikeloc-9f171",
+    "storage_bucket": "bikeloc-9f171.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1042773314477:android:b21802d5c04006a3046f24",
+        "mobilesdk_app_id": "1:124574380347:android:31b646464e694880ac071e",
         "android_client_info": {
           "package_name": "br.com.felix.bikeloc"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1042773314477-kddveavpbuq3bvoqgt4equlbtn1eflgu.apps.googleusercontent.com",
+          "client_id": "124574380347-0vrauom1gisvtd15slbsu7f3huiafoug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.felix.bikeloc",
+            "certificate_hash": "cb6c785e5d2479598051176420452547eea5af42"
+          }
+        },
+        {
+          "client_id": "124574380347-5nu8qbc4cf8b08e1d5o31513b7rb7v9a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDR6A6oFhifTF_PxoJWYgeMAhIFmnBO2nA"
+          "current_key": "AIzaSyBU9VlS7H4V5EU4aThST2bq87Qsb65SyNM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1042773314477-kddveavpbuq3bvoqgt4equlbtn1eflgu.apps.googleusercontent.com",
+              "client_id": "124574380347-5nu8qbc4cf8b08e1d5o31513b7rb7v9a.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
