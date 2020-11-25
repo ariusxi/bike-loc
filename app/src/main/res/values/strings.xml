@@ -6,4 +6,5 @@
     <string name="shr_hint_descricao">Descrição...</string>
     <string name="shr_hint_latitude">Latitude</string>
     <string name="shr_hint_longitude">Longitude</string>
+    <string name="title_activity_place_map">Map</string>
 </resources>

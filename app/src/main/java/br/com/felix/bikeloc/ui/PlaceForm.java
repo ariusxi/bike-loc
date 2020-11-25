@@ -1,4 +1,4 @@
-package br.com.felix.bikeloc;
+package br.com.felix.bikeloc.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,11 +14,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -34,18 +34,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.model.Place;
 
-public class PlaceAdd extends AppCompatActivity {
+public class PlaceForm extends AppCompatActivity {
 
     private static final String TAG = "PlaceAdd";
     private static final int LOCATION_REQUEST_CODE = 1001;
@@ -56,8 +54,6 @@ public class PlaceAdd extends AppCompatActivity {
 
     public EditText nameInput;
     public EditText descriptionInput;
-    public EditText latitudeInput;
-    public EditText longitudeInput;
 
     public String latitude;
     public String longitude;
@@ -73,11 +69,14 @@ public class PlaceAdd extends AppCompatActivity {
                     latitude = String.format("%s", location.getLatitude());
                     longitude = String.format("%s", location.getLongitude());
                 }
-                latitudeInput.setText(latitude);
-                longitudeInput.setText(longitude);
             }
         }
     };
+
+    public void goToPlaceForm(View view) {
+        Intent placeForm = new Intent(this, PlaceForm.class);
+        startActivity(placeForm);
+    }
 
     private void checkSettingAndStartUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build();
@@ -97,7 +96,7 @@ public class PlaceAdd extends AppCompatActivity {
                 if (e instanceof ResolvableApiException) {
                     ResolvableApiException apiException = (ResolvableApiException) e;
                     try {
-                        apiException.startResolutionForResult(PlaceAdd.this, 1001);
+                        apiException.startResolutionForResult(PlaceForm.this, 1001);
                     } catch (IntentSender.SendIntentException ex) {
                         ex.printStackTrace();
                     }
@@ -109,15 +108,13 @@ public class PlaceAdd extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_place_add);
+        setContentView(R.layout.activity_place_form);
 
         // Inicializando os campos do formulário
         nameInput = (EditText) findViewById(R.id.nameInput);
-        latitudeInput = (EditText) findViewById(R.id.latitudeInput);
-        longitudeInput = (EditText) findViewById(R.id.longitudeInput);
         descriptionInput = (EditText) findViewById(R.id.descriptionInput);
 
-        FirebaseApp.initializeApp(PlaceAdd.this);
+        FirebaseApp.initializeApp(PlaceForm.this);
         db = FirebaseDatabase.getInstance().getReference();
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -147,14 +144,14 @@ public class PlaceAdd extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(PlaceAdd.this, "Local cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(PlaceAdd.this, "Falha ao cadastrar local", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -217,16 +214,26 @@ public class PlaceAdd extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent placeList = new Intent(this, PlaceList.class);
+        startActivity(placeList);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.lista:
-                //Chama a lista de lugares
+            case R.id.home:
+                // Chama da página home
                 finish();
-                Intent intent = new Intent(this, ListaLocal.class);
-                startActivity(intent);
+                Intent home = new Intent(this, PlaceMap.class);
+                startActivity(home);
                 return(true);
-            case R.id.cadastrar:
-
+            case R.id.lista:
+                //Chama a pagina de cadastro
+                finish();
+                Intent placeList = new Intent(this, PlaceList.class);
+                startActivity(placeList);
                 return(true);
         }
         return(super.onOptionsItemSelected(item));

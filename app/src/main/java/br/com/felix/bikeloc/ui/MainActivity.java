@@ -23,8 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.felix.bikeloc.ListaLocal;
-import br.com.felix.bikeloc.PlaceAdd;
 import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.model.Place;
 
@@ -45,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // Inicializando o módulo de geolocalização
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        editTextDescription = findViewById(R.id.editTextDescription);
 
         // Verificando se o celular liberou a permissão de geolocalização
         if (
@@ -105,17 +102,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.home:
+                finish();
+                Intent home = new Intent(this, MainActivity.class);
+                startActivity(home);
+                return(true);
+
             case R.id.lista:
                 //Chama a pagina de cadastro
                 finish();
-                Intent intent = new Intent(this, ListaLocal.class);
-                startActivity(intent);
-                return(true);
-            case R.id.cadastrar:
-                finish();
-                Intent intent1 = new Intent(this, PlaceAdd.class);
-                startActivity(intent1);
-
+                Intent placeList = new Intent(this, PlaceList.class);
+                startActivity(placeList);
                 return(true);
         }
         return(super.onOptionsItemSelected(item));

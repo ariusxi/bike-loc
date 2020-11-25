@@ -4,12 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlaceAdd"
-    >
+    tools:context=".ui.PlaceForm">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cadastrar novo local"
+            android:textAlignment="center"
+            android:textSize="26sp"
+            android:layout_margin="10dp"/>
 
         <EditText
             android:id="@+id/nameInput"
@@ -22,31 +30,20 @@
             android:id="@+id/descriptionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:lines="6"
             android:layout_margin="10dp"
             android:hint="@string/shr_hint_descricao"/>
 
-        <EditText
-            android:id="@+id/latitudeInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:enabled="false"
-            android:hint="@string/shr_hint_latitude"/>
-
-        <EditText
-            android:id="@+id/longitudeInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:enabled="false"
-            android:hint="@string/shr_hint_longitude"/>
         <Button
             android:id="@+id/CadastrarButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cadastrar"
+            android:layout_marginTop="20dp"
             android:onClick="savePlace"
             android:layout_gravity="right"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"/>
     </LinearLayout>
 </FrameLayout>
