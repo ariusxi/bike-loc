@@ -14,9 +14,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +53,11 @@ public class PlaceForm extends AppCompatActivity {
     private DatabaseReference db;
 
     public FusedLocationProviderClient fusedLocationProviderClient;
+
+    public String placeId;
+
+    public TextView titleFormText;
+    public Button editPlaceButton;
 
     public EditText nameInput;
     public EditText descriptionInput;
@@ -110,12 +117,29 @@ public class PlaceForm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_form);
 
+        // Inicializando os textos da tela
+        titleFormText = (TextView) findViewById(R.id.titleFormText);
+        editPlaceButton = (Button) findViewById(R.id.editPlaceButton);
+
         // Inicializando os campos do formulário
         nameInput = (EditText) findViewById(R.id.nameInput);
         descriptionInput = (EditText) findViewById(R.id.descriptionInput);
 
         FirebaseApp.initializeApp(PlaceForm.this);
         db = FirebaseDatabase.getInstance().getReference();
+
+        // Resgatando os dados do lugar
+        Bundle placeData = getIntent().getExtras();
+        if (placeData != null) {
+            titleFormText.setText(String.format("Editar evento %s", placeData.getString("name")));
+
+            // Salvando a informação do id
+            Log.v("placeData", String.valueOf(placeData));
+
+            // Adicionando os dados no input
+            nameInput.setText(String.format("%s", placeData.getString("name")));
+            descriptionInput.setText(String.format("%s", placeData.getString("description")));
+        }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -125,10 +149,10 @@ public class PlaceForm extends AppCompatActivity {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    public void savePlace(View view) {
+    private void registerPlace(String name, String description) {
         Place place = new Place(
-                nameInput.getEditableText().toString(),
-                descriptionInput.getEditableText().toString(),
+                name,
+                description,
                 Double.parseDouble(latitude),
                 Double.parseDouble(longitude)
         );
@@ -154,6 +178,54 @@ public class PlaceForm extends AppCompatActivity {
                         Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void updatePlace(String name, String description) {
+        Place place = new Place(
+                placeId,
+                name,
+                description,
+                Double.parseDouble(latitude),
+                Double.parseDouble(longitude)
+        );
+
+        Map<String, Object> location = new HashMap<>();
+        location.put("name", place.getName());
+        location.put("description", place.getDescription());
+        location.put("latitude", place.getLatitude());
+        location.put("longitude", place.getLongitude());
+        location.put("createdAt", place.getCreatedAt());
+
+        db.child("places").child(place.getId()).setValue(location)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(PlaceForm.this, "Local atualizado com sucesso", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(PlaceForm.this, "Falha ao atualizar local", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void savePlace(View view) {
+        String name = nameInput.getEditableText().toString().trim();
+        String description = descriptionInput.getEditableText().toString().trim();
+
+        if (name.isEmpty() || description.isEmpty()) {
+            Toast.makeText(this, "Você deve preencher todos os campos", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (placeId != null) {
+            this.updatePlace(name, description);
+        } else {
+            this.registerPlace(name, description);
+        }
     }
 
     private void askLocationPermission() {

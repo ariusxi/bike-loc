@@ -28,7 +28,7 @@ import br.com.felix.bikeloc.model.Place;
 public class PlaceList extends AppCompatActivity {
 
     private RecyclerView mrecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private PlaceAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private DatabaseReference db;
@@ -77,9 +77,17 @@ public class PlaceList extends AppCompatActivity {
                 mrecyclerView = findViewById(R.id.recyclerView);
                 mrecyclerView.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(PlaceList.this);
-                mAdapter = new PlaceAdapter(tempPlacesList);
+                adapter = new PlaceAdapter(tempPlacesList);
+
+                adapter.setOnItemClickListener(new PlaceAdapter.ItemClickListener() {
+                    @Override
+                    public void onItemClick(int position, Place place) {
+
+                    }
+                });
+
                 mrecyclerView.setLayoutManager(mLayoutManager);
-                mrecyclerView.setAdapter(mAdapter);
+                mrecyclerView.setAdapter(adapter);
             }
 
             @Override
