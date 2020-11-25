@@ -42,6 +42,7 @@ public class PlaceList extends AppCompatActivity {
     private DatabaseReference db;
 
 
+
     public void goToPlaceForm(View view) {
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
@@ -81,7 +82,10 @@ public class PlaceList extends AppCompatActivity {
 
         getAllPlaces();
 
+
+
     }
+
     public void removePlace(String placeId){
         db.child("places").child(placeId).removeValue();
     }
@@ -117,7 +121,8 @@ public class PlaceList extends AppCompatActivity {
                     }
                     @Override
                     public void onDeleteClick(int position, Place place) {
-                        showRemoveDialog(place.getId());
+                       removePlace(place.getId());
+                       adapter.notifyItemRemoved(position);
                     }
                 });
 
