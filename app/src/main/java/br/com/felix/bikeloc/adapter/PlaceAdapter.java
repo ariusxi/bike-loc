@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.ValueEventListener;
@@ -44,6 +46,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         public TextView description;
 
         public Button editPlaceButton;
+        public Button btnDelete;
+
 
         public PlaceViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,7 +55,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             name = itemView.findViewById(R.id.name);
             description = itemView.findViewById(R.id.description);
             editPlaceButton = itemView.findViewById(R.id.editPlaceButton);
-
+            btnDelete = itemView.findViewById(R.id.removePlaceButton);
             editPlaceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -73,7 +77,25 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                     Log.d("place", String.valueOf(placeData));
                 }
             });
+
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (itemClickListener != null) {
+                        int position = getAdapterPosition();
+                        Place place = mPlaceArrayList.get(position);
+                        if (position != RecyclerView.NO_POSITION) {
+                            itemClickListener.onDeleteClick(position, place);
+
+                        }
+                    }
+
+                }
+            });
+
         }
+
 
         @Override
         public void onClick(View view) {
@@ -81,6 +103,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                 itemClickListener.onItemClick(getAdapterPosition(), mPlaceArrayList.get(getAdapterPosition()));
             }
         }
+
 
     }
 
@@ -105,6 +128,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
     public interface ItemClickListener {
         void onItemClick(int position, Place place);
+        void onDeleteClick(int position, Place place);
     }
 
     @Override

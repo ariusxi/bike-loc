@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp"
     android:layout_margin="4dp"
+    android:id="@+id/CardView"
     >
 
     <RelativeLayout
@@ -56,6 +57,23 @@
             android:backgroundTint="@null"
             android:onClick="goTopPlaceEdit"
             android:text="Editar"
+            android:textColor="@color/secondaryColor"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/removePlaceButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="115dp"
+            android:layout_marginLeft="115dp"
+            android:layout_marginTop="1dp"
+            android:layout_below="@id/description"
+            android:layout_toEndOf="@+id/editPlaceButton"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@null"
+            android:onClick="goTopPlaceRemove"
+            android:text="Remover"
             android:textColor="@color/secondaryColor"
             android:textStyle="bold" />
 

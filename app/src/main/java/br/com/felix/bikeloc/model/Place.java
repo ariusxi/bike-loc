@@ -1,5 +1,7 @@
 package br.com.felix.bikeloc.model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 import java.util.Calendar;
@@ -22,6 +24,7 @@ public class Place implements Serializable {
             double latitude,
             double longitude
     ) {
+        Log.d("id", id);
         this.id = id;
         this.name = name;
         this.description = description;

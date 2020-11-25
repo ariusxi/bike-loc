@@ -1,16 +1,22 @@
 package br.com.felix.bikeloc.ui;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -30,8 +38,9 @@ public class PlaceList extends AppCompatActivity {
     private RecyclerView mrecyclerView;
     private PlaceAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private Button btnDelete;
     private DatabaseReference db;
+
 
     public void goToPlaceForm(View view) {
         Intent placeForm = new Intent(this, PlaceForm.class);
@@ -43,16 +52,38 @@ public class PlaceList extends AppCompatActivity {
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
     }
+    public void goTopPlaceRemove(View view) {
+
+    }
+    public void showRemoveDialog(String placeId){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.remove_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        final TextView editTextName = (TextView) dialogView.findViewById(R.id.warningTextView);
+        final Button buttonRemove = (Button) dialogView.findViewById(R.id.removePlace);
+
+        dialogBuilder.setTitle("Removendo " + placeId);
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_list);
-
+        mrecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         FirebaseApp.initializeApp(PlaceList.this);
+
         db = FirebaseDatabase.getInstance().getReference();
 
         getAllPlaces();
+
+    }
+    public void removePlace(String placeId){
+        db.child("places").child(placeId).removeValue();
     }
 
     public void getAllPlaces() {
@@ -62,7 +93,7 @@ public class PlaceList extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     Place currentPlace = new Place(
-                            ds.child("id").getValue(String.class),
+                            ds.getKey(),
                             ds.child("name").getValue(String.class),
                             ds.child("description").getValue(String.class),
                             ds.child("latitude").getValue(Double.class),
@@ -84,6 +115,10 @@ public class PlaceList extends AppCompatActivity {
                     public void onItemClick(int position, Place place) {
 
                     }
+                    @Override
+                    public void onDeleteClick(int position, Place place) {
+                        showRemoveDialog(place.getId());
+                    }
                 });
 
                 mrecyclerView.setLayoutManager(mLayoutManager);
@@ -97,11 +132,13 @@ public class PlaceList extends AppCompatActivity {
         });
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -121,5 +158,6 @@ public class PlaceList extends AppCompatActivity {
         }
         return(super.onOptionsItemSelected(item));
     }
+
 
 }
