@@ -5,12 +5,15 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -40,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // Inicializando o módulo de geolocalização
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        editTextDescription = findViewById(R.id.editTextDescription);
 
         // Verificando se o celular liberou a permissão de geolocalização
         if (
@@ -90,6 +92,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             // Caso tenha acontecido algum problema ao cadastrar o lugar
             Toast.makeText(this, "Por favor digite a descrição do lugar", Toast.LENGTH_LONG).show();
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.home:
+                finish();
+                Intent home = new Intent(this, MainActivity.class);
+                startActivity(home);
+                return(true);
+
+            case R.id.lista:
+                //Chama a pagina de cadastro
+                finish();
+                Intent placeList = new Intent(this, PlaceList.class);
+                startActivity(placeList);
+                return(true);
+        }
+        return(super.onOptionsItemSelected(item));
     }
 
 }

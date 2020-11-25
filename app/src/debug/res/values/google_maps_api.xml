@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=CB:6C:78:5E:5D:24:79:59:80:51:17:64:20:45:25:47:EE:A5:AF:42%3Bbr.com.felix.bikeloc.ui
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    br.com.felix.bikeloc.ui
+
+    SHA-1 certificate fingerprint:
+    CB:6C:78:5E:5D:24:79:59:80:51:17:64:20:45:25:47:EE:A5:AF:42
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyB45Dd9GipTgOzuxHYk5LQ3yLma9C2SpOM</string>
+</resources>
