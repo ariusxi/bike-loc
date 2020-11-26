@@ -122,7 +122,11 @@ public class PlaceList extends AppCompatActivity {
                     @Override
                     public void onDeleteClick(int position, Place place) {
                        removePlace(place.getId());
-                       adapter.notifyItemRemoved(position);
+                       mrecyclerView.removeViewAt(position);
+                        adapter.notifyItemRemoved(position);
+
+
+
                     }
                 });
 
