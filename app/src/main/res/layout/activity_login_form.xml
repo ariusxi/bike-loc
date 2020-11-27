@@ -37,8 +37,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="50dp"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/bike" />
@@ -108,7 +108,7 @@
                     android:paddingEnd="6dp"
                     android:text="Email"
                     android:textAllCaps="true"
-                    android:textColor="@color/secondaryLightColor"
+                    android:textColor="@color/primaryColor"
                     app:layout_constraintBottom_toTopOf="@+id/layoutEmail"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/layoutEmail" />
@@ -164,7 +164,7 @@
                     android:paddingEnd="6dp"
                     android:text="@string/senha_text"
                     android:textAllCaps="true"
-                    android:textColor="@color/secondaryLightColor"
+                    android:textColor="@color/primaryColor"
                     app:layout_constraintBottom_toTopOf="@+id/layoutPassword"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/layoutPassword" />
@@ -196,7 +196,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/n_o_tem_conta"
+                    android:text="@string/nao_tem_conta"
                     android:textColor="@color/secondaryColor"
                     android:textSize="17sp"/>
 

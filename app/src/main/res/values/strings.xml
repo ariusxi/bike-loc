@@ -11,13 +11,19 @@
     <string name="title_activity_login">Login</string>
 
     <string name="welcome">Bem-vindo!</string>
-    <string name="sing_in_to_continue">Logue para continuar</string>
+    <string name="sing_in_to_continue">Faça login para continuar</string>
     <string name="senha_string">Senha</string>
     <string name="seu_email_com">seu@email.com</string>
     <string name="senha_text">Senha</string>
     <string name="entrar_text">Entrar</string>
-    <string name="n_o_tem_conta">Não tem conta?</string>
-    <string name="n_o_tem_conta">Não tem conta?</string>
+    <string name="nao_tem_conta">Não tem conta?</string>
     <string name="criar_uma_nova_conta">Criar uma nova conta</string>
+    <string name="nomeApp">BikeLoc</string>
+    <string name="criarConta">Crie sua conta</string>
+    <string name="nome">Nome</string>
+    <string name="username">Nome de usuário</string>
+    <string name="confirmar_senha">Confirmar senha</string>
+    <string name="button_cadastro">Cadastre-se</string>
+    <string name="ja_tem_conta">Já tem conta?</string>
 
 </resources>
