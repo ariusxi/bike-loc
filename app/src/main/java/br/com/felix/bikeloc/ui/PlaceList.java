@@ -44,18 +44,19 @@ public class PlaceList extends AppCompatActivity {
     private DatabaseReference db;
 
     public void goToPlaceForm(View view) {
+
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
 
     public void goTopPlaceEdit(View view) {
         Log.v("View", String.valueOf(view));
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
-    public void goTopPlaceRemove(View view) {
 
-    }
 
     public void showRemoveDialog(String placeId){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);

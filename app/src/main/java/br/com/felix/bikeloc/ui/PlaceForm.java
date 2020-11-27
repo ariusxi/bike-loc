@@ -81,8 +81,10 @@ public class PlaceForm extends AppCompatActivity {
     };
 
     public void goToPlaceForm(View view) {
+
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
 
     private void checkSettingAndStartUpdates() {

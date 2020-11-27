@@ -18,14 +18,37 @@
             android:text="Cadastrar novo local"
             android:textAlignment="center"
             android:textSize="26sp"
-            android:layout_margin="10dp"/>
+            android:textColor="@color/secondaryTextColor"
+            android:layout_margin="10dp"
+            />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameInput_text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_margin="10dp"
+            app:boxStrokeColor="@color/secondaryColor"
+            android:textColorHint="@color/primaryColor">
         <EditText
             android:id="@+id/nameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:ems="10"
             android:hint="@string/shr_hint_nome"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descriptionInput_text_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterOverflowTextColor="@color/secondaryColor"
+            android:layout_margin="10dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="150"
+            app:boxStrokeColor="@color/secondaryColor"
+            android:textColorHint="@color/primaryColor"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <EditText
             android:id="@+id/descriptionInput"
@@ -33,14 +56,21 @@
             android:layout_height="wrap_content"
             android:gravity="top|left"
             android:lines="6"
-            android:layout_margin="10dp"
+            android:ems="150"
             android:hint="@string/shr_hint_descricao"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/registerPlaceButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cadastrar"
+            android:textColor="@color/secondaryTextColor"
+            app:iconTint="@color/secondaryTextColor"
+            app:icon="@drawable/ic_baseline_add_24"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:backgroundTint="@color/secondaryColor"
             android:layout_marginTop="20dp"
             android:onClick="savePlace"
             android:layout_gravity="right"
