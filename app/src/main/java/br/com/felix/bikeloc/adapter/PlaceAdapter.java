@@ -61,20 +61,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                 public void onClick(View view) {
                     Integer positionPlace = getAdapterPosition();
                     Place place = mPlaceArrayList.get(positionPlace);
-                    Bundle placeData = new Bundle();
 
-                    // Adicionando os dados do lugar para a intent
-                    placeData.putString("id", place.getId());
-                    placeData.putString("name", place.getName());
-                    placeData.putString("description", place.getDescription());
-                    placeData.putDouble("latitude", place.getLatitude());
-                    placeData.putDouble("longitude", place.getLongitude());
-
-                    Intent placeFormIntent = new Intent(view.getContext(), PlaceForm.class);
-                    placeFormIntent.putExtras(placeData);
-                    view.getContext().startActivity(placeFormIntent);
-
-                    Log.d("place", String.valueOf(placeData));
+                    itemClickListener.onUpdateClick(place);
                 }
             });
 
@@ -128,6 +116,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
     public interface ItemClickListener {
         void onItemClick(int position, Place place);
+        void onUpdateClick(Place place);
         void onDeleteClick(int position, Place place);
     }
 
