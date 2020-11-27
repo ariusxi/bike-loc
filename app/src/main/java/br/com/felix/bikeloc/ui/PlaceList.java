@@ -3,9 +3,9 @@ package br.com.felix.bikeloc.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,17 +15,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -38,10 +38,10 @@ public class PlaceList extends AppCompatActivity {
     private RecyclerView mrecyclerView;
     private PlaceAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private Button btnDelete;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private DatabaseReference db;
-
-
 
     public void goToPlaceForm(View view) {
         Intent placeForm = new Intent(this, PlaceForm.class);
@@ -56,6 +56,7 @@ public class PlaceList extends AppCompatActivity {
     public void goTopPlaceRemove(View view) {
 
     }
+
     public void showRemoveDialog(String placeId){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -82,12 +83,33 @@ public class PlaceList extends AppCompatActivity {
 
         getAllPlaces();
 
+        // Refresh swipe
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_place_items);
 
-
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    getAllPlaces();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
 
     public void removePlace(String placeId){
-        db.child("places").child(placeId).removeValue();
+        db.child("places").child(placeId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(PlaceList.this, "Local removido com sucesso", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                Toast.makeText(PlaceList.this, "Falha ao remover o local", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void getAllPlaces() {
@@ -119,14 +141,30 @@ public class PlaceList extends AppCompatActivity {
                     public void onItemClick(int position, Place place) {
 
                     }
+
+                    @Override
+                    public void onUpdateClick(Place place) {
+                        Bundle placeData = new Bundle();
+
+                        // Adicionando os dados do lugar para a intent
+                        placeData.putString("id", place.getId());
+                        placeData.putString("name", place.getName());
+                        placeData.putString("description", place.getDescription());
+                        placeData.putDouble("latitude", place.getLatitude());
+                        placeData.putDouble("longitude", place.getLongitude());
+
+                        Intent placeFormIntent = new Intent(PlaceList.this, PlaceForm.class);
+                        placeFormIntent.putExtras(placeData);
+                        startActivity(placeFormIntent);
+                    }
+
                     @Override
                     public void onDeleteClick(int position, Place place) {
                        removePlace(place.getId());
                        mrecyclerView.removeViewAt(position);
-                        adapter.notifyItemRemoved(position);
-
-
-
+                       adapter.notifyItemRemoved(position);
+                       getAllPlaces();
+                       adapter.notifyItemRemoved(position);
                     }
                 });
 
@@ -155,7 +193,7 @@ public class PlaceList extends AppCompatActivity {
             case R.id.home:
                 // Chama da página home
                 finish();
-                Intent home = new Intent(this, PlaceMap.class);
+                Intent home = new Intent(this, MainActivity.class);
                 startActivity(home);
                 return(true);
             case R.id.lista:
