@@ -7,4 +7,17 @@
     <string name="shr_hint_latitude">Latitude</string>
     <string name="shr_hint_longitude">Longitude</string>
     <string name="title_activity_place_map">Map</string>
+
+    <string name="title_activity_login">Login</string>
+
+    <string name="welcome">Bem-vindo!</string>
+    <string name="sing_in_to_continue">Logue para continuar</string>
+    <string name="senha_string">Senha</string>
+    <string name="seu_email_com">seu@email.com</string>
+    <string name="senha_text">Senha</string>
+    <string name="entrar_text">Entrar</string>
+    <string name="n_o_tem_conta">Não tem conta?</string>
+    <string name="n_o_tem_conta">Não tem conta?</string>
+    <string name="criar_uma_nova_conta">Criar uma nova conta</string>
+
 </resources>
