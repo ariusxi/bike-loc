@@ -84,6 +84,7 @@
                         app:tint="@color/secondaryColor" />
 
                     <EditText
+                        android:id="@+id/editTextLoginEmail"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:background="@null"
@@ -140,6 +141,7 @@
                         app:tint="@color/secondaryColor" />
 
                     <EditText
+                        android:id="@+id/editTextLoginSenha"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:background="@null"
@@ -172,6 +174,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
+                android:onClick="login"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginStart="30dp"
