@@ -3,7 +3,6 @@ package br.com.felix.bikeloc.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
@@ -24,8 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -41,21 +37,11 @@ public class PlaceList extends AppCompatActivity {
     private Button btnDelete;
     private DatabaseReference db;
 
-
-
     public void goToPlaceForm(View view) {
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
     }
 
-    public void goTopPlaceEdit(View view) {
-        Log.v("View", String.valueOf(view));
-        Intent placeForm = new Intent(this, PlaceForm.class);
-        startActivity(placeForm);
-    }
-    public void goTopPlaceRemove(View view) {
-
-    }
     public void showRemoveDialog(String placeId){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -70,7 +56,6 @@ public class PlaceList extends AppCompatActivity {
         alertDialog.show();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +66,6 @@ public class PlaceList extends AppCompatActivity {
         db = FirebaseDatabase.getInstance().getReference();
 
         getAllPlaces();
-
-
 
     }
 
@@ -137,13 +120,11 @@ public class PlaceList extends AppCompatActivity {
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -163,6 +144,5 @@ public class PlaceList extends AppCompatActivity {
         }
         return(super.onOptionsItemSelected(item));
     }
-
 
 }
