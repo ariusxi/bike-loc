@@ -57,7 +57,7 @@ public class PlaceForm extends AppCompatActivity {
     public String placeId;
 
     public TextView titleFormText;
-    public Button editPlaceButton;
+    public Button registerPlaceButton;
 
     public EditText nameInput;
     public EditText descriptionInput;
@@ -81,8 +81,10 @@ public class PlaceForm extends AppCompatActivity {
     };
 
     public void goToPlaceForm(View view) {
+
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
 
     private void checkSettingAndStartUpdates() {
@@ -119,7 +121,7 @@ public class PlaceForm extends AppCompatActivity {
 
         // Inicializando os textos da tela
         titleFormText = (TextView) findViewById(R.id.titleFormText);
-        editPlaceButton = (Button) findViewById(R.id.editPlaceButton);
+        registerPlaceButton = (Button) findViewById(R.id.registerPlaceButton);
 
         // Inicializando os campos do formulário
         nameInput = (EditText) findViewById(R.id.nameInput);
@@ -132,9 +134,10 @@ public class PlaceForm extends AppCompatActivity {
         Bundle placeData = getIntent().getExtras();
         if (placeData != null) {
             titleFormText.setText(String.format("Editar evento %s", placeData.getString("name")));
+            registerPlaceButton.setText("Editar");
 
             // Salvando a informação do id
-            Log.v("placeData", String.valueOf(placeData));
+            placeId = placeData.getString("id");
 
             // Adicionando os dados no input
             nameInput.setText(String.format("%s", placeData.getString("name")));
@@ -168,14 +171,14 @@ public class PlaceForm extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -226,6 +229,10 @@ public class PlaceForm extends AppCompatActivity {
         } else {
             this.registerPlace(name, description);
         }
+
+        // Redirecionando o usuário para a tela de listagem de eventos
+        Intent placeListIntent = new Intent(PlaceForm.this, PlaceList.class);
+        startActivity(placeListIntent);
     }
 
     private void askLocationPermission() {
@@ -298,7 +305,7 @@ public class PlaceForm extends AppCompatActivity {
             case R.id.home:
                 // Chama da página home
                 finish();
-                Intent home = new Intent(this, PlaceMap.class);
+                Intent home = new Intent(this, MainActivity.class);
                 startActivity(home);
                 return(true);
             case R.id.lista:

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,6 +37,12 @@ public class LoginFormActivity extends AppCompatActivity {
     public void login(View view) {
         String email = editTextLoginEmail.getEditableText().toString();
         String senha = editTextLoginSenha.getEditableText().toString();
+
+        if (email.isEmpty() || senha.isEmpty()) {
+            Toast.makeText(this, "Você deve informar login e senha", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         auth.signInWithEmailAndPassword(email, senha).
                 addOnSuccessListener((result) -> {
                     startActivity(new Intent (this, MainActivity.class));

@@ -235,6 +235,7 @@
                     app:tint="@color/secondaryColor" />
 
                 <EditText
+                    android:id="@+id/editTextCadastroConfirmSenha"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
                     android:background="@null"

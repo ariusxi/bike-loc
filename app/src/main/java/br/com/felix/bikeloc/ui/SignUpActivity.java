@@ -17,22 +17,27 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText editTextCadastroUsername;
     private EditText editTextCadastroEmail;
     private EditText editTextCadastroSenha;
+    private EditText editTextCadastroConfirmSenha;
+
     private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        editTextCadastroUsername = findViewById(R.id.editTextCadastroUsername);
-        editTextCadastroEmail = findViewById(R.id.editTextCadastroEmail);
-        editTextCadastroSenha = findViewById(R.id.editTextCadastroSenha);
+
+        // Fields of the Signin form
+        editTextCadastroUsername = (EditText) findViewById(R.id.editTextCadastroUsername);
+        editTextCadastroEmail = (EditText) findViewById(R.id.editTextCadastroEmail);
+        editTextCadastroSenha = (EditText) findViewById(R.id.editTextCadastroSenha);
+        editTextCadastroConfirmSenha = (EditText) findViewById(R.id.editTextCadastroConfirmSenha);
+
         auth = FirebaseAuth.getInstance();
 
         findViewById(R.id.imageBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 onBackPressed();
-
             }
         });
 
@@ -45,13 +50,34 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void signUp(View view) {
-        //String username = editTextCadastroUsername.getEditableText().toString();
         String email = editTextCadastroEmail.getEditableText().toString();
-        String senha = editTextCadastroSenha.getEditableText().toString();
-        auth.createUserWithEmailAndPassword(email, senha).addOnSuccessListener((result) -> {
-                Toast.makeText(this, result.getUser().getEmail(), Toast.LENGTH_SHORT).show();
-                finish();
+        String password = editTextCadastroSenha.getEditableText().toString();
+        String confirmPassword = editTextCadastroConfirmSenha.getEditableText().toString();
 
-        }).addOnFailureListener((error) -> error.printStackTrace());
+        // Verificando se os campos obrigatórios foram preenchidos
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Toast.makeText(this, "Você deve preencher todos os campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validando se as senhas estão acima de 6 dígitos
+        if (password.length() < 6 || confirmPassword.length() < 6) {
+            Toast.makeText(this, "As senhas devem ser maior que 6 dígitos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validando se a senha e a confirmação de senha estão iguais
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "A confirmação de senha e a senha devem estar iguais", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Cadastrando usuário no firebase
+        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener((result) -> {
+            Toast.makeText(this, "Cadastro realizado com sucesso", Toast.LENGTH_SHORT).show();
+            finish();
+        }).addOnFailureListener((error) -> {
+            Toast.makeText(this, "Ocorreu um erro ao cadastrar usuário", Toast.LENGTH_SHORT).show();
+        });
     }
 }
