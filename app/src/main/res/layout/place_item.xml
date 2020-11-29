@@ -8,8 +8,7 @@
     app:cardCornerRadius="4dp"
     android:layout_margin="4dp"
     android:id="@+id/CardView"
-    android:backgroundTint="@color/primaryLightColor"
-    >
+    android:backgroundTint="@color/primaryLightColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -63,7 +62,6 @@
             android:onClick="goTopPlaceEdit"
             android:text="Editar"
             android:textStyle="bold" />
-
 
     </RelativeLayout>
 

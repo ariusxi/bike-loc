@@ -39,9 +39,9 @@ public class PlaceList extends AppCompatActivity {
     private PlaceAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     private DatabaseReference db;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public void goToPlaceForm(View view) {
 
@@ -57,7 +57,6 @@ public class PlaceList extends AppCompatActivity {
         finish();
     }
 
-
     public void showRemoveDialog(String placeId){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -71,7 +70,6 @@ public class PlaceList extends AppCompatActivity {
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,13 +178,11 @@ public class PlaceList extends AppCompatActivity {
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -206,6 +202,5 @@ public class PlaceList extends AppCompatActivity {
         }
         return(super.onOptionsItemSelected(item));
     }
-
 
 }

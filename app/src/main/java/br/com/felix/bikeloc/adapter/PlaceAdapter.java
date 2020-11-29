@@ -57,6 +57,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             description = itemView.findViewById(R.id.description);
             editPlaceButton = itemView.findViewById(R.id.editPlaceButton);
             cardView = itemView.findViewById(R.id.CardView);
+
             editPlaceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -66,6 +67,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                     itemClickListener.onUpdateClick(place);
                 }
             });
+            
             cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -89,7 +91,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                 itemClickListener.onItemClick(getAdapterPosition(), mPlaceArrayList.get(getAdapterPosition()));
             }
         }
-
 
     }
 

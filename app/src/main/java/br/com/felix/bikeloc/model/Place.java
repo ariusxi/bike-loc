@@ -24,7 +24,6 @@ public class Place implements Serializable {
             double latitude,
             double longitude
     ) {
-        Log.d("id", id);
         this.id = id;
         this.name = name;
         this.description = description;
