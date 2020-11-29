@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.ValueEventListener;
@@ -46,7 +47,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         public TextView description;
 
         public Button editPlaceButton;
-        public Button btnDelete;
+        public CardView cardView;
 
 
         public PlaceViewHolder(@NonNull View itemView) {
@@ -55,7 +56,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             name = itemView.findViewById(R.id.name);
             description = itemView.findViewById(R.id.description);
             editPlaceButton = itemView.findViewById(R.id.editPlaceButton);
-            btnDelete = itemView.findViewById(R.id.removePlaceButton);
+            cardView = itemView.findViewById(R.id.CardView);
             editPlaceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -65,20 +66,17 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
                     itemClickListener.onUpdateClick(place);
                 }
             });
-
-            btnDelete.setOnClickListener(new View.OnClickListener() {
+            cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View view) {
-
+                public boolean onLongClick(View view) {
                     if (itemClickListener != null) {
                         int position = getAdapterPosition();
                         Place place = mPlaceArrayList.get(position);
                         if (position != RecyclerView.NO_POSITION) {
                             itemClickListener.onDeleteClick(position, place);
-
                         }
                     }
-
+                    return true;
                 }
             });
 

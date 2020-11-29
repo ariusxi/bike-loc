@@ -81,8 +81,10 @@ public class PlaceForm extends AppCompatActivity {
     };
 
     public void goToPlaceForm(View view) {
+
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
 
     private void checkSettingAndStartUpdates() {
@@ -169,14 +171,14 @@ public class PlaceForm extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

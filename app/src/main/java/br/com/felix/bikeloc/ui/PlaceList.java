@@ -16,7 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,18 +44,19 @@ public class PlaceList extends AppCompatActivity {
     private DatabaseReference db;
 
     public void goToPlaceForm(View view) {
+
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
 
     public void goTopPlaceEdit(View view) {
         Log.v("View", String.valueOf(view));
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
+        finish();
     }
-    public void goTopPlaceRemove(View view) {
 
-    }
 
     public void showRemoveDialog(String placeId){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -95,7 +99,18 @@ public class PlaceList extends AppCompatActivity {
     }
 
     public void removePlace(String placeId){
-        db.child("places").child(placeId).removeValue();
+        db.child("places").child(placeId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(PlaceList.this, "Local removido com sucesso", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                Toast.makeText(PlaceList.this, "Falha ao remover o local", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void getAllPlaces() {
@@ -147,6 +162,8 @@ public class PlaceList extends AppCompatActivity {
                     @Override
                     public void onDeleteClick(int position, Place place) {
                        removePlace(place.getId());
+                       mrecyclerView.removeViewAt(position);
+                       adapter.notifyItemRemoved(position);
                        getAllPlaces();
                        adapter.notifyItemRemoved(position);
                     }
