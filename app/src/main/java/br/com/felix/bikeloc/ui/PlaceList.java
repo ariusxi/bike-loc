@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 import br.com.felix.bikeloc.adapter.PlaceAdapter;
 import br.com.felix.bikeloc.R;
+import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
 public class PlaceList extends AppCompatActivity {
@@ -39,6 +40,7 @@ public class PlaceList extends AppCompatActivity {
     private PlaceAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private Session session;
     private DatabaseReference db;
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -51,7 +53,6 @@ public class PlaceList extends AppCompatActivity {
     }
 
     public void goTopPlaceEdit(View view) {
-        Log.v("View", String.valueOf(view));
         Intent placeForm = new Intent(this, PlaceForm.class);
         startActivity(placeForm);
         finish();
@@ -79,6 +80,7 @@ public class PlaceList extends AppCompatActivity {
         FirebaseApp.initializeApp(PlaceList.this);
 
         db = FirebaseDatabase.getInstance().getReference();
+        session = new Session(this);
 
         getAllPlaces();
 
@@ -113,19 +115,20 @@ public class PlaceList extends AppCompatActivity {
 
     public void getAllPlaces() {
         ArrayList<Place> tempPlacesList = new ArrayList<>();
-        db.child("places").addValueEventListener(new ValueEventListener() {
+        String user = session.get("user_id");
+
+        db.child("places").orderByChild("user").equalTo(user).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     Place currentPlace = new Place(
                             ds.getKey(),
+                            ds.child("user").getValue(String.class),
                             ds.child("name").getValue(String.class),
                             ds.child("description").getValue(String.class),
                             ds.child("latitude").getValue(Double.class),
                             ds.child("longitude").getValue(Double.class)
                     );
-
-                    Log.d("Place", String.valueOf(currentPlace));
 
                     tempPlacesList.add(currentPlace);
                 }
@@ -137,8 +140,21 @@ public class PlaceList extends AppCompatActivity {
 
                 adapter.setOnItemClickListener(new PlaceAdapter.ItemClickListener() {
                     @Override
-                    public void onItemClick(int position, Place place) {
+                    public void onItemClick(Place place) {
+                        Bundle placeData = new Bundle();
 
+                        // Adicionando os dados do lugar para a intent
+                        placeData.putString("id", place.getId());
+                        placeData.putString("user", place.getUser());
+                        placeData.putString("name", place.getName());
+                        placeData.putString("description", place.getDescription());
+                        placeData.putDouble("latitude", place.getLatitude());
+                        placeData.putDouble("longitude", place.getLongitude());
+
+                        // Movendo para a janela de informações do lugar
+                        Intent placeInfoIntent = new Intent(PlaceList.this, PlaceInfo.class);
+                        placeInfoIntent.putExtras(placeData);
+                        startActivity(placeInfoIntent);
                     }
 
                     @Override
@@ -147,11 +163,13 @@ public class PlaceList extends AppCompatActivity {
 
                         // Adicionando os dados do lugar para a intent
                         placeData.putString("id", place.getId());
+                        placeData.putString("user", place.getUser());
                         placeData.putString("name", place.getName());
                         placeData.putString("description", place.getDescription());
                         placeData.putDouble("latitude", place.getLatitude());
                         placeData.putDouble("longitude", place.getLongitude());
 
+                        // Movendo para a janela de edição do lugar
                         Intent placeFormIntent = new Intent(PlaceList.this, PlaceForm.class);
                         placeFormIntent.putExtras(placeData);
                         startActivity(placeFormIntent);

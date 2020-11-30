@@ -61,10 +61,23 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             editPlaceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Integer positionPlace = getAdapterPosition();
+                    int positionPlace = getAdapterPosition();
                     Place place = mPlaceArrayList.get(positionPlace);
 
                     itemClickListener.onUpdateClick(place);
+                }
+            });
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemClickListener != null) {
+                        int position = getAdapterPosition();
+                        Place place = mPlaceArrayList.get(position);
+                        if (position != RecyclerView.NO_POSITION) {
+                            itemClickListener.onItemClick(place);
+                        }
+                    }
                 }
             });
             
@@ -88,7 +101,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         @Override
         public void onClick(View view) {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(getAdapterPosition(), mPlaceArrayList.get(getAdapterPosition()));
+                itemClickListener.onItemClick(mPlaceArrayList.get(getAdapterPosition()));
             }
         }
 
@@ -114,7 +127,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
     }
 
     public interface ItemClickListener {
-        void onItemClick(int position, Place place);
+        void onItemClick(Place place);
         void onUpdateClick(Place place);
         void onDeleteClick(int position, Place place);
     }

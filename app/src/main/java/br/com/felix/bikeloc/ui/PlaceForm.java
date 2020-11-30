@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import br.com.felix.bikeloc.R;
+import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
 public class PlaceForm extends AppCompatActivity {
@@ -51,6 +51,7 @@ public class PlaceForm extends AppCompatActivity {
     private static final int LOCATION_REQUEST_CODE = 1001;
 
     private DatabaseReference db;
+    private Session session;
 
     public FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -123,6 +124,9 @@ public class PlaceForm extends AppCompatActivity {
         titleFormText = (TextView) findViewById(R.id.titleFormText);
         registerPlaceButton = (Button) findViewById(R.id.registerPlaceButton);
 
+        // Inicializando sessão
+        session = new Session(this);
+
         // Inicializando os campos do formulário
         nameInput = (EditText) findViewById(R.id.nameInput);
         descriptionInput = (EditText) findViewById(R.id.descriptionInput);
@@ -153,7 +157,10 @@ public class PlaceForm extends AppCompatActivity {
     }
 
     private void registerPlace(String name, String description) {
+        String user = session.get("user_id");
+
         Place place = new Place(
+                user,
                 name,
                 description,
                 Double.parseDouble(latitude),
@@ -161,6 +168,7 @@ public class PlaceForm extends AppCompatActivity {
         );
 
         Map<String, Object> location = new HashMap<>();
+        location.put("user", place.getUser());
         location.put("name", place.getName());
         location.put("description", place.getDescription());
         location.put("latitude", place.getLatitude());
@@ -184,8 +192,10 @@ public class PlaceForm extends AppCompatActivity {
     }
 
     private void updatePlace(String name, String description) {
+        String user = session.get("user_id");
         Place place = new Place(
                 placeId,
+                user,
                 name,
                 description,
                 Double.parseDouble(latitude),
@@ -193,6 +203,7 @@ public class PlaceForm extends AppCompatActivity {
         );
 
         Map<String, Object> location = new HashMap<>();
+        location.put("user", place.getUser());
         location.put("name", place.getName());
         location.put("description", place.getDescription());
         location.put("latitude", place.getLatitude());

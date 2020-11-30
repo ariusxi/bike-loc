@@ -77,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Cadastro realizado com sucesso", Toast.LENGTH_SHORT).show();
             finish();
         }).addOnFailureListener((error) -> {
+            error.printStackTrace();
             Toast.makeText(this, "Ocorreu um erro ao cadastrar usuário", Toast.LENGTH_SHORT).show();
         });
     }

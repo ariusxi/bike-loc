@@ -11,6 +11,7 @@ import java.util.UUID;
 public class Place implements Serializable {
 
     private String id;
+    private String user;
     private String name;
     private String description;
     private double latitude;
@@ -19,12 +20,14 @@ public class Place implements Serializable {
 
     public Place(
             String id,
+            String user,
             String name,
             String description,
             double latitude,
             double longitude
     ) {
         this.id = id;
+        this.user = user;
         this.name = name;
         this.description = description;
         this.latitude = latitude;
@@ -33,12 +36,14 @@ public class Place implements Serializable {
     }
 
     public Place(
+            String user,
             String name,
             String description,
             double latitude,
             double longitude
     ) {
         this.id = UUID.randomUUID().toString();
+        this.user = user;
         this.name = name;
         this.description = description;
         this.latitude = latitude;
@@ -47,6 +52,10 @@ public class Place implements Serializable {
     }
 
     public Place() {}
+
+    public void setUser(String user) { this.user = user; }
+
+    public String getUser() { return user; }
 
     public void setName(String name) {
         this.name = name;
