@@ -1,5 +1,6 @@
 package br.com.felix.bikeloc.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -16,13 +18,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.felix.bikeloc.R;
+import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
 public class PlaceInfo extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private DatabaseReference db;
     private Place currentPlaceData;
 
     public TextView titlePlaceText;
@@ -31,10 +39,13 @@ public class PlaceInfo extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_place_info);
 
         // Inicializando os TextViews da tela
-        titlePlaceText = findViewById(R.id.titlePlaceText);
-        descriptionPlaceText = findViewById(R.id.descriptionPlaceText);
+        titlePlaceText = (TextView) findViewById(R.id.titlePlaceText);
+        descriptionPlaceText = (TextView) findViewById(R.id.descriptionPlaceText);
+
+        db = FirebaseDatabase.getInstance().getReference();
 
         // Resgatando os dados do lugar
         Bundle placeData = getIntent().getExtras();
@@ -48,9 +59,12 @@ public class PlaceInfo extends AppCompatActivity implements OnMapReadyCallback {
                     placeData.getDouble("latitude"),
                     placeData.getDouble("longitude")
             );
+
+            // Adicionando informações na tela
+            titlePlaceText.setText(currentPlaceData.getName());
+            descriptionPlaceText.setText(currentPlaceData.getDescription());
         }
 
-        setContentView(R.layout.activity_place_info);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapPlaceData);
         mapFragment.getMapAsync(this);
     }
@@ -74,6 +88,23 @@ public class PlaceInfo extends AppCompatActivity implements OnMapReadyCallback {
         // Adicionando marker ao mapa
         mMap.addMarker(marker);
         mMap.moveCamera(cameraUpdate);
+    }
+
+    public void removePlace(View view) {
+        db.child("places").child(currentPlaceData.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(PlaceInfo.this, "Local removido com sucesso", Toast.LENGTH_SHORT).show();
+                Intent placeListIntent = new Intent(PlaceInfo.this, PlaceList.class);
+                startActivity(placeListIntent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                Toast.makeText(PlaceInfo.this, "Falha ao remover o local", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void goTopPlaceEdit(View view) {

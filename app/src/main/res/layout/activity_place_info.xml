@@ -22,6 +22,8 @@
         android:text="Título do evento"
         android:textSize="20dp"
         android:id="@+id/titlePlaceText"
+        android:textColor="@color/primaryColor"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.079"
@@ -30,19 +32,37 @@
         app:layout_constraintVertical_bias="0.055" />
 
     <TextView
+        android:id="@+id/descriptionPlaceText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:text="Descrição do Evento"
-        android:id="@+id/descriptionPlaceText"
+        android:textColor="@color/secondaryColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.073"
+        app:layout_constraintHorizontal_bias="0.056"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titlePlaceText"
-        app:layout_constraintVertical_bias="0.067" />
+        app:layout_constraintVertical_bias="0.066" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/floatingButtonDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="removePlace"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.972"
+        app:srcCompat="@drawable/ic_delete_black" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButtonEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
@@ -54,7 +74,7 @@
         app:layout_constraintHorizontal_bias="0.954"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.973"
+        app:layout_constraintVertical_bias="0.783"
         app:srcCompat="@drawable/ic_edit_black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
