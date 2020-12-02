@@ -17,7 +17,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeLoc">
-        <activity android:name=".ui.PlaceInfo"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -32,11 +31,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MainActivity" />
-        <activity
-            android:name=".ui.PlaceMap"
-            android:label="@string/title_activity_place_map" />
-        <activity android:name=".ui.PlaceForm" />
-        <activity android:name=".ui.PlaceList" />
     </application>
 
 </manifest>

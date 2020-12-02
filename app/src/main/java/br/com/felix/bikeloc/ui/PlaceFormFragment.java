@@ -1,22 +1,25 @@
 package br.com.felix.bikeloc.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.room.Database;
+
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -45,7 +48,7 @@ import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
-public class PlaceForm extends AppCompatActivity {
+public class PlaceFormFragment extends Fragment {
 
     private static final String TAG = "PlaceAdd";
     private static final int LOCATION_REQUEST_CODE = 1001;
@@ -58,10 +61,12 @@ public class PlaceForm extends AppCompatActivity {
     public String placeId;
 
     public TextView titleFormText;
-    public Button registerPlaceButton;
+    public Button registerplaceButton;
 
     public EditText nameInput;
     public EditText descriptionInput;
+
+    public Button registerPlaceButton;
 
     public String latitude;
     public String longitude;
@@ -81,16 +86,13 @@ public class PlaceForm extends AppCompatActivity {
         }
     };
 
-    public void goToPlaceForm(View view) {
+    public PlaceFormFragment() {
 
-        Intent placeForm = new Intent(this, PlaceForm.class);
-        startActivity(placeForm);
-        finish();
     }
 
     private void checkSettingAndStartUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build();
-        SettingsClient client = LocationServices.getSettingsClient(this);
+        SettingsClient client = LocationServices.getSettingsClient(getActivity());
 
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
         locationSettingsResponseTask.addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
@@ -106,7 +108,7 @@ public class PlaceForm extends AppCompatActivity {
                 if (e instanceof ResolvableApiException) {
                     ResolvableApiException apiException = (ResolvableApiException) e;
                     try {
-                        apiException.startResolutionForResult(PlaceForm.this, 1001);
+                        apiException.startResolutionForResult(getActivity(), 1001);
                     } catch (IntentSender.SendIntentException ex) {
                         ex.printStackTrace();
                     }
@@ -115,45 +117,26 @@ public class PlaceForm extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_place_form);
+    public static PlaceFormFragment newInstance() {
+        PlaceFormFragment fragment = new PlaceFormFragment();
+        return fragment;
+    }
 
-        // Inicializando os textos da tela
-        titleFormText = (TextView) findViewById(R.id.titleFormText);
-        registerPlaceButton = (Button) findViewById(R.id.registerPlaceButton);
+    public static PlaceFormFragment newInstance(Place place) {
+        PlaceFormFragment fragment = new PlaceFormFragment();
 
-        // Inicializando sessão
-        session = new Session(this);
+        // Adicionando informações do local na página
+        Bundle args = new Bundle();
+        args.putString("id", place.getId());
+        args.putString("user", place.getUser());
+        args.putString("name", place.getName());
+        args.putString("description", place.getDescription());
+        args.putDouble("latitude", place.getLatitude());
+        args.putDouble("longitude", place.getLongitude());
 
-        // Inicializando os campos do formulário
-        nameInput = (EditText) findViewById(R.id.nameInput);
-        descriptionInput = (EditText) findViewById(R.id.descriptionInput);
+        fragment.setArguments(args);
 
-        FirebaseApp.initializeApp(PlaceForm.this);
-        db = FirebaseDatabase.getInstance().getReference();
-
-        // Resgatando os dados do lugar
-        Bundle placeData = getIntent().getExtras();
-        if (placeData != null) {
-            titleFormText.setText(String.format("Editar evento %s", placeData.getString("name")));
-            registerPlaceButton.setText("Editar");
-
-            // Salvando a informação do id
-            placeId = placeData.getString("id");
-
-            // Adicionando os dados no input
-            nameInput.setText(String.format("%s", placeData.getString("name")));
-            descriptionInput.setText(String.format("%s", placeData.getString("description")));
-        }
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(2000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return fragment;
     }
 
     private void registerPlace(String name, String description) {
@@ -179,14 +162,14 @@ public class PlaceForm extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(PlaceForm.this, "Local cadastrado com sucesso", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Local cadastrado com sucesso", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(PlaceForm.this, "Falha ao cadastrar local", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Falha ao cadastrar local", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -214,24 +197,24 @@ public class PlaceForm extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(PlaceForm.this, "Local atualizado com sucesso", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Local atualizado com sucesso", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(PlaceForm.this, "Falha ao atualizar local", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Falha ao atualizar local", Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    public void savePlace(View view) {
+    public void savePlace() {
         String name = nameInput.getEditableText().toString().trim();
         String description = descriptionInput.getEditableText().toString().trim();
 
         if (name.isEmpty() || description.isEmpty()) {
-            Toast.makeText(this, "Você deve preencher todos os campos", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Você deve preencher todos os campos", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -242,16 +225,86 @@ public class PlaceForm extends AppCompatActivity {
         }
 
         // Redirecionando o usuário para a tela de listagem de eventos
-        Intent placeListIntent = new Intent(PlaceForm.this, PlaceList.class);
-        startActivity(placeListIntent);
+        replaceFragment(
+                R.id.frameLayoutMain,
+                PlaceFragment.newInstance(),
+                "PROFILEFRAGMENT",
+                "PROFILE"
+        );
+    }
+
+    protected void replaceFragment(
+            @IdRes int containerViewId,
+            @NonNull Fragment fragment,
+            @NonNull String fragmentTag,
+            @Nullable String backStackStateName
+    ) {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(containerViewId, fragment, fragmentTag)
+                .addToBackStack(backStackStateName)
+                .commit();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Inicializando os textos da tela
+        titleFormText = (TextView) getActivity().findViewById(R.id.titleFormText);
+        registerplaceButton = (Button) getActivity().findViewById(R.id.registerPlaceButton);
+
+        // Inicializando os campos do formulário
+        nameInput = (EditText) getActivity().findViewById(R.id.nameInput);
+        descriptionInput = (EditText) getActivity().findViewById(R.id.descriptionInput);
+
+        if (getArguments() != null) {
+            titleFormText.setText(String.format("Editar evento %s", getArguments().getString("name")));
+            registerplaceButton.setText("Editar");
+
+            // Salvando a informação do id
+            placeId = getArguments().getString("id");
+
+            // Adicionando os dados no input
+            nameInput.setText(String.format("%s", getArguments().getString("name")));
+            descriptionInput.setText(String.format("%s", getArguments().getString("description")));
+        }
+
+        // Inicializando a instância do botão
+        registerplaceButton = (Button) getActivity().findViewById(R.id.registerPlaceButton);
+        registerplaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                savePlace();
+            }
+        });
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Inicializando a sessão
+        session = new Session(getActivity());
+
+
+        FirebaseApp.initializeApp(getActivity());
+        db = FirebaseDatabase.getInstance().getReference();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(2000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void askLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)){
+                ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             }
         }
     }
@@ -275,58 +328,33 @@ public class PlaceForm extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             checkSettingAndStartUpdates();
         } else {
             askLocationPermission();
         }
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         stopLocationUpdates();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         stopLocationUpdates();
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent placeList = new Intent(this, PlaceList.class);
-        startActivity(placeList);
+    public View onCreateView(
+            LayoutInflater inflater,
+            ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        return inflater.inflate(R.layout.fragment_place_form, container, false);
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.home:
-                // Chama da página home
-                finish();
-                Intent home = new Intent(this, MainActivity.class);
-                startActivity(home);
-                return(true);
-            case R.id.lista:
-                //Chama a pagina de cadastro
-                finish();
-                Intent placeList = new Intent(this, PlaceList.class);
-                startActivity(placeList);
-                return(true);
-        }
-        return(super.onOptionsItemSelected(item));
-    }
-
 }

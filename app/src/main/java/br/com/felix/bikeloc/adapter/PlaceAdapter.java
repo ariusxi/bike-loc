@@ -1,30 +1,20 @@
 package br.com.felix.bikeloc.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.model.Place;
-import br.com.felix.bikeloc.ui.PlaceForm;
-import br.com.felix.bikeloc.ui.PlaceList;
 
 
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder> {

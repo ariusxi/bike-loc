@@ -1,8 +1,11 @@
 package br.com.felix.bikeloc.ui;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,67 +46,55 @@ import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
-
-    private GoogleMap mMap;
-
-    private Session session;
-    private DatabaseReference db;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Inicializando firebase
-        db = FirebaseDatabase.getInstance().getReference();
-
-        // Recuperando os dados da sessão
-        session = new Session(this);
-
         setContentView(R.layout.activity_main);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        replaceFragment(
+                R.id.frameLayoutMain,
+                HomeFragment.newInstance(),
+                "HOMEFRAGMENT",
+                "HOME"
+        );
 
-        String user = session.get("user_id");
-        db.child("places").orderByChild("user").equalTo(user).addValueEventListener(new ValueEventListener() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.map:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                HomeFragment.newInstance(),
+                                "HOMEFRAGMENT",
+                                "HOME"
+                        );
+                        return true;
 
-                for (DataSnapshot ds: snapshot.getChildren()) {
-                    Place currentPlace = new Place(
-                            ds.getKey(),
-                            ds.child("user").getValue(String.class),
-                            ds.child("name").getValue(String.class),
-                            ds.child("description").getValue(String.class),
-                            ds.child("latitude").getValue(Double.class),
-                            ds.child("longitude").getValue(Double.class)
-                    );
+                    case R.id.places:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                PlaceFragment.newInstance(),
+                                "PLACEFRAGMENT",
+                                "PLACE"
+                        );
+                        return true;
 
-                    LatLng currentCoordinates = new LatLng(currentPlace.getLatitude(), currentPlace.getLongitude());
-                    MarkerOptions marker = new MarkerOptions().position(currentCoordinates).title(currentPlace.getName());
-
-                    builder.include(marker.getPosition());
-
-                    int padding = 250;
-                    LatLngBounds bounds = builder.build();
-
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-                    // Adicionando marker ao mapa
-                    mMap.addMarker(marker);
-                    mMap.moveCamera(cameraUpdate);
+                    case R.id.profile:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                ProfileFragment.newInstance(),
+                                "PROFILEFRAGMENT",
+                                "PROFILE"
+                        );
+                        return true;
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+                return false;
             }
         });
     }
@@ -116,20 +108,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.home:
+            case R.id.logout:
                 finish();
-                Intent home = new Intent(this, MainActivity.class);
-                startActivity(home);
-                return(true);
-
-            case R.id.lista:
-                //Chama a pagina de cadastro
-                finish();
-                Intent placeList = new Intent(this, PlaceList.class);
-                startActivity(placeList);
+                Intent loginFormIntent = new Intent(this, LoginFormActivity.class);
+                startActivity(loginFormIntent);
                 return(true);
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    protected void replaceFragment(
+            @IdRes int containerViewId,
+            @NonNull Fragment fragment,
+            @NonNull String fragmentTag,
+            @Nullable String backStackStateName
+    ) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(containerViewId, fragment, fragmentTag)
+                .addToBackStack(backStackStateName)
+                .commit();
     }
 
 }
