@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class PlaceFormFragment extends Fragment {
     private static final String TAG = "PlaceAdd";
     private static final int LOCATION_REQUEST_CODE = 1001;
 
-    private DatabaseReference db;
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private Session session;
 
     public FusedLocationProviderClient fusedLocationProviderClient;
@@ -158,7 +159,7 @@ public class PlaceFormFragment extends Fragment {
         location.put("longitude", place.getLongitude());
         location.put("createdAt", place.getCreatedAt());
 
-        db.child("places").child(place.getId()).setValue(location)
+        firebaseFirestore.collection("places").document(place.getId()).set(location)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -193,7 +194,7 @@ public class PlaceFormFragment extends Fragment {
         location.put("longitude", place.getLongitude());
         location.put("createdAt", place.getCreatedAt());
 
-        db.child("places").child(place.getId()).setValue(location)
+        firebaseFirestore.collection("places").document(place.getId()).set(location)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -287,10 +288,7 @@ public class PlaceFormFragment extends Fragment {
         // Inicializando a sessão
         session = new Session(getActivity());
 
-
         FirebaseApp.initializeApp(getActivity());
-        db = FirebaseDatabase.getInstance().getReference();
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         locationRequest = LocationRequest.create();

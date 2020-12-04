@@ -56,6 +56,7 @@ public class LoginFormActivity extends AppCompatActivity {
                     // Salvando os dados do usuário na sessão
                     FirebaseUser user = result.getUser();
                     session.set("user_id", user.getUid());
+                    session.set("user_name", user.getDisplayName());
 
                     startActivity(new Intent (this, MainActivity.class));
                 }).

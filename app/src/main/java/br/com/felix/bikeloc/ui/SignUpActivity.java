@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import br.com.felix.bikeloc.R;
 
@@ -50,12 +52,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void signUp(View view) {
+        String name = editTextCadastroUsername.getEditableText().toString();
         String email = editTextCadastroEmail.getEditableText().toString();
         String password = editTextCadastroSenha.getEditableText().toString();
         String confirmPassword = editTextCadastroConfirmSenha.getEditableText().toString();
 
         // Verificando se os campos obrigatórios foram preenchidos
-        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Você deve preencher todos os campos", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -74,6 +77,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Cadastrando usuário no firebase
         auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener((result) -> {
+            // Adicionando o nome de usuário no registro de usuário
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+            user.updateProfile(profileUpdates);
+
             Toast.makeText(this, "Cadastro realizado com sucesso", Toast.LENGTH_SHORT).show();
             finish();
         }).addOnFailureListener((error) -> {

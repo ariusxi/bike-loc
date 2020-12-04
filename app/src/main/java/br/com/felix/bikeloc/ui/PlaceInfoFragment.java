@@ -18,6 +18,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -26,6 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import br.com.felix.bikeloc.R;
 import br.com.felix.bikeloc.model.Place;
@@ -33,7 +36,7 @@ import br.com.felix.bikeloc.model.Place;
 public class PlaceInfoFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private DatabaseReference db;
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private Place currentPlaceData;
 
     public FloatingActionButton floatingButtonEdit;
@@ -107,8 +110,6 @@ public class PlaceInfoFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        db = FirebaseDatabase.getInstance().getReference();
-
         // Inicializando o mapa da tela
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapPlaceData);
         if (mapFragment != null) {
@@ -124,7 +125,8 @@ public class PlaceInfoFragment extends Fragment implements OnMapReadyCallback {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
             LatLng currentCoordinates = new LatLng(getArguments().getDouble("latitude"), getArguments().getDouble("longitude"));
-            MarkerOptions marker = new MarkerOptions().position(currentCoordinates).title(getArguments().getString("name"));
+            BitmapDescriptor iconMarker = BitmapDescriptorFactory.fromResource(R.drawable.ic_marker);
+            MarkerOptions marker = new MarkerOptions().position(currentCoordinates).icon(iconMarker).title(getArguments().getString("name"));
 
             builder.include(marker.getPosition());
 
@@ -140,7 +142,7 @@ public class PlaceInfoFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void removePlace() {
-        db.child("places").child(currentPlaceData.getId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+        firebaseFirestore.collection("places").document(currentPlaceData.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(getActivity(), "Local removido com sucesso", Toast.LENGTH_SHORT).show();

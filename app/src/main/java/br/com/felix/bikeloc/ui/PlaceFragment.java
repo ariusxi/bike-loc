@@ -27,6 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -42,7 +47,7 @@ public class PlaceFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Session session;
-    private DatabaseReference db;
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     private FloatingActionButton buttonRegister;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -72,14 +77,13 @@ public class PlaceFragment extends Fragment {
         mrecyclerview = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
         FirebaseApp.initializeApp(getActivity());
 
-        db = FirebaseDatabase.getInstance().getReference();
         session = new Session(getActivity());
 
         getAllPlaces();
     }
 
     public void removePlace(String placeId){
-        db.child("places").child(placeId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+        firebaseFirestore.collection("places").document(placeId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(getActivity(), "Local removido com sucesso", Toast.LENGTH_SHORT).show();
@@ -97,67 +101,66 @@ public class PlaceFragment extends Fragment {
         ArrayList<Place> tempPlacesList = new ArrayList<>();
         String user = session.get("user_id");
 
-        db.child("places").orderByChild("user").equalTo(user).addValueEventListener(new ValueEventListener() {
+        firebaseFirestore.collection("places").whereEqualTo("user", user).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()) {
-                    Place currentPlace = new Place(
-                            ds.getKey(),
-                            ds.child("user").getValue(String.class),
-                            ds.child("name").getValue(String.class),
-                            ds.child("description").getValue(String.class),
-                            ds.child("latitude").getValue(Double.class),
-                            ds.child("longitude").getValue(Double.class)
-                    );
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (e == null) {
+                    for (DocumentSnapshot ds: documentSnapshots) {
+                        Place currentPlace = new Place(
+                                ds.getId(),
+                                ds.getString("user"),
+                                ds.getString("name"),
+                                ds.getString("description"),
+                                ds.getDouble("latitude"),
+                                ds.getDouble("longitude")
+                        );
 
-                    tempPlacesList.add(currentPlace);
+                        tempPlacesList.add(currentPlace);
+                    }
+
+                    mrecyclerview = getActivity().findViewById(R.id.recyclerView);
+                    if (mrecyclerview != null) {
+                        mrecyclerview.setHasFixedSize(true);
+                        mLayoutManager = new LinearLayoutManager(getActivity());
+                        adapter = new PlaceAdapter(tempPlacesList);
+
+                        adapter.setOnItemClickListener(new PlaceAdapter.ItemClickListener() {
+                            @Override
+                            public void onItemClick(Place place) {
+                                // Movendo para a janela de informações do lugar
+                                replaceFragment(
+                                        R.id.frameLayoutMain,
+                                        PlaceInfoFragment.newInstance(place),
+                                        "PLACEINFOFRAGMENT",
+                                        "PLACEINFO"
+                                );
+                            }
+
+                            @Override
+                            public void onUpdateClick(Place place) {
+                                // Movendo para a janela de informações do lugar
+                                replaceFragment(
+                                        R.id.frameLayoutMain,
+                                        PlaceFormFragment.newInstance(place),
+                                        "PLACEFORMFRAGMENT",
+                                        "PLACEFORM"
+                                );
+                            }
+
+                            @Override
+                            public void onDeleteClick(int position, Place place) {
+                                removePlace(place.getId());
+                                mrecyclerview.removeViewAt(position);
+                                adapter.notifyItemRemoved(position);
+                                getAllPlaces();
+                                adapter.notifyItemRemoved(position);
+                            }
+                        });
+
+                        mrecyclerview.setLayoutManager(mLayoutManager);
+                        mrecyclerview.setAdapter(adapter);
+                    }
                 }
-
-                mrecyclerview = getActivity().findViewById(R.id.recyclerView);
-                mrecyclerview.setHasFixedSize(true);
-                mLayoutManager = new LinearLayoutManager(getActivity());
-                adapter = new PlaceAdapter(tempPlacesList);
-
-                adapter.setOnItemClickListener(new PlaceAdapter.ItemClickListener() {
-                    @Override
-                    public void onItemClick(Place place) {
-                        // Movendo para a janela de informações do lugar
-                        replaceFragment(
-                                R.id.frameLayoutMain,
-                                PlaceInfoFragment.newInstance(place),
-                                "PLACEINFOFRAGMENT",
-                                "PLACEINFO"
-                        );
-                    }
-
-                    @Override
-                    public void onUpdateClick(Place place) {
-                        // Movendo para a janela de informações do lugar
-                        replaceFragment(
-                                R.id.frameLayoutMain,
-                                PlaceFormFragment.newInstance(place),
-                                "PLACEFORMFRAGMENT",
-                                "PLACEFORM"
-                        );
-                    }
-
-                    @Override
-                    public void onDeleteClick(int position, Place place) {
-                        removePlace(place.getId());
-                        mrecyclerview.removeViewAt(position);
-                        adapter.notifyItemRemoved(position);
-                        getAllPlaces();
-                        adapter.notifyItemRemoved(position);
-                    }
-                });
-
-                mrecyclerview.setLayoutManager(mLayoutManager);
-                mrecyclerview.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }

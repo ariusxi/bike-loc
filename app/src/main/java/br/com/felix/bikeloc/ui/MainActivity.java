@@ -107,13 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.logout:
-                finish();
-                Intent loginFormIntent = new Intent(this, LoginFormActivity.class);
-                startActivity(loginFormIntent);
-                return(true);
-        }
         return(super.onOptionsItemSelected(item));
     }
 
