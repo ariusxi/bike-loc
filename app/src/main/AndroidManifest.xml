@@ -18,18 +18,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeLoc">
 
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_key" />
-        <activity android:name=".ui.SignUpActivity"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity android:name=".ui.SignUpActivity" />
         <activity android:name=".ui.LoginFormActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.MainActivity" />
-        <activity android:name=".ui.PlaceMap" android:label="@string/title_activity_place_map"/>
-        <activity android:name=".ui.PlaceForm" />
-        <activity android:name=".ui.PlaceList" />
     </application>
 
 </manifest>

@@ -1,98 +1,104 @@
 package br.com.felix.bikeloc.ui;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.felix.bikeloc.R;
+import br.com.felix.bikeloc.auth.Session;
 import br.com.felix.bikeloc.model.Place;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
-
-    private List<Place> places;
-    private double latitude;
-    private double longitude;
-
-    public EditText editTextDescription;
-
-    public DatabaseReference databasePlaces;
-    protected LocationManager locationManager;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Inicializando o módulo de geolocalização
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        // Verificando se o celular liberou a permissão de geolocalização
-        if (
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-        // Pegando todos os dados do lugares
-        databasePlaces = FirebaseDatabase.getInstance().getReference("places");
-
-        // Inicializando lista de lugares
-        places = new ArrayList<Place>();
-
         setContentView(R.layout.activity_main);
+
+        replaceFragment(
+                R.id.frameLayoutMain,
+                HomeFragment.newInstance(),
+                "HOMEFRAGMENT",
+                "HOME"
+        );
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.map:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                HomeFragment.newInstance(),
+                                "HOMEFRAGMENT",
+                                "HOME"
+                        );
+                        return true;
+
+                    case R.id.places:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                PlaceFragment.newInstance(),
+                                "PLACEFRAGMENT",
+                                "PLACE"
+                        );
+                        return true;
+
+                    case R.id.profile:
+                        replaceFragment(
+                                R.id.frameLayoutMain,
+                                ProfileFragment.newInstance(),
+                                "PROFILEFRAGMENT",
+                                "PROFILE"
+                        );
+                        return true;
+                }
+
+                return false;
+            }
+        });
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-    }
-
-
-    public void addPlace() {
-        // Recuperando dados do formulário
-        String description = editTextDescription.getText().toString().trim();
-
-        if (!TextUtils.isEmpty(description)) {
-            // Gerando o id do lugar
-            String id = databasePlaces.push().getKey();
-
-            // Inicializando a instância do lugar atual
-            Place currentPlace = new Place(id, description, latitude, longitude);
-
-            // Adicionando o lugar no banco de dados
-            databasePlaces.child(id).setValue(currentPlace);
-
-            // Resetando o valor do campo de descrição
-            editTextDescription.setText("");
-
-            // Mostrando resultado ao usuário
-            Toast.makeText(this, "Lugar registrado com sucesso", Toast.LENGTH_LONG).show();
-        } else {
-            // Caso tenha acontecido algum problema ao cadastrar o lugar
-            Toast.makeText(this, "Por favor digite a descrição do lugar", Toast.LENGTH_LONG).show();
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -101,21 +107,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.home:
-                finish();
-                Intent home = new Intent(this, MainActivity.class);
-                startActivity(home);
-                return(true);
-
-            case R.id.lista:
-                //Chama a pagina de cadastro
-                finish();
-                Intent placeList = new Intent(this, PlaceList.class);
-                startActivity(placeList);
-                return(true);
-        }
         return(super.onOptionsItemSelected(item));
+    }
+
+    protected void replaceFragment(
+            @IdRes int containerViewId,
+            @NonNull Fragment fragment,
+            @NonNull String fragmentTag,
+            @Nullable String backStackStateName
+    ) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(containerViewId, fragment, fragmentTag)
+                .addToBackStack(backStackStateName)
+                .commit();
     }
 
 }
